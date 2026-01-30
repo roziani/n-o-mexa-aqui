@@ -162,7 +162,9 @@
       return false;
     }
 
-    iframe.src = `https://player.pandavideo.com.br/embed/VIDEO_ID/${videoId}?autoplay=1`;
+    const PANDAVIDEO_BASE = "https://player-vz-6eff8cf6-bd6.tv.pandavideo.com.br/embed/";
+
+iframe.src = `${PANDAVIDEO_BASE}?v=${videoId}&autoplay=1`;
 
     iframe.addEventListener("load", () => {
       iframe.style.opacity = "1";
@@ -188,5 +190,6 @@
 
 </body>
 </html>
+
 
 
