@@ -167,9 +167,9 @@
       return false;
     }
 
-    const PANDAVIDEO_BASE = "https://player-vz-6eff8cf6-bd6.tv.pandavideo.com.br";
+    const PANDAVIDEO_DOMAIN = "https://player-vz-6eff8cf6-bd6.tv.pandavideo.com.br/embed/";
 
-iframe.src = `${PANDAVIDEO_BASE}/embed/?v=${videoId}&autoplay=1`;
+iframe.src = `${PANDAVIDEO_DOMAIN}?id=${videoId}&autoplay=1`;
 
     iframe.addEventListener("load", () => {
       iframe.style.opacity = "1";
@@ -195,6 +195,7 @@ iframe.src = `${PANDAVIDEO_BASE}/embed/?v=${videoId}&autoplay=1`;
 
 </body>
 </html>
+
 
 
 
