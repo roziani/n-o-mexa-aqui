@@ -110,13 +110,18 @@
 
   /* ===== HELPERS ===== */
   function getParams() {
-    const p = new URLSearchParams(window.location.search);
-    return {
-      videoId: p.get("vimeo_id"),
-      expira: parseInt(p.get("expira")),
-      key: p.get("key")
-    };
-  }
+  const p = new URLSearchParams(window.location.search);
+  let raw = p.get("vimeo_id");
+
+  // limpa se vier URL inteira ou ?v=
+  let videoId = raw?.replace(/^.*v=/, "").trim();
+
+  return {
+    videoId,
+    expira: parseInt(p.get("expira")),
+    key: p.get("key")
+  };
+}
 
   async function sha256(text) {
     const data = new TextEncoder().encode(text);
@@ -190,6 +195,7 @@ iframe.src = `${PANDAVIDEO_BASE}?v=${videoId}&autoplay=1`;
 
 </body>
 </html>
+
 
 
 
