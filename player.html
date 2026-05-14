@@ -112,7 +112,7 @@
   function getParams() {
     const p = new URLSearchParams(window.location.search);
     return {
-      videoId: p.get("video_id"),
+      videoId: p.get("vimeo_id"),
       expira: parseInt(p.get("expira")),
       key: p.get("key")
     };
@@ -140,7 +140,6 @@
   /* ===== PLAYER ===== */
   async function iniciarPlayer() {
     const { videoId, expira, key } = getParams();
-    alert(videoId);
     const erro = document.getElementById("erro");
     const iframe = document.getElementById("playerFrame");
 
@@ -163,8 +162,7 @@
       return false;
     }
 
-   iframe.src =
-`https://iframe.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}?autoplay=false`;
+    iframe.src = `https://iframe.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}?autoplay=1`;
 
     iframe.addEventListener("load", () => {
       iframe.style.opacity = "1";
@@ -190,4 +188,3 @@
 
 </body>
 </html>
-
