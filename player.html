@@ -163,7 +163,7 @@
     }
 
    iframe.src =
-`https://player.mediadelivery.net/play/${LIBRARY_ID}/${videoId}`;
+`https://iframe.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}?autoplay=false`;
 
     iframe.addEventListener("load", () => {
       iframe.style.opacity = "1";
