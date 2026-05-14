@@ -8,11 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -74,17 +70,9 @@
     }
 
     @keyframes pulse {
-      0% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.07);
-      }
-
-      100% {
-        transform: scale(1);
-      }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.07); }
+      100% { transform: scale(1); }
     }
 
     .erro {
@@ -105,198 +93,99 @@
 
 <body>
 
-  <div id="player-wrapper">
-    <iframe
-      id="playerFrame"
-      allow="autoplay; fullscreen"
-      allowfullscreen>
-    </iframe>
-  </div>
-
-  <button id="botaoPlay">
-    <img src="play.png" alt="Play">
-  </button>
-
-  <div id="erro" class="erro"></div>
-
-  <script>
-
-    /* ===== CONFIGURAÇÃO ===== */
-
-    const SEGREDO = "gregoriPlay123456";
-    const LIBRARY_ID = "660152";
-
-
-
-    /* ===== HELPERS ===== */
-
-    function getParams() {
-
-      const p = new URLSearchParams(window.location.search);
-
-      return {
-        videoId: p.get("video_id"),
-        expira: p.get("expira"),
-        key: p.get("key")
-      };
-
-    }
-
-
-
-    async function sha256(text) {
-
-      const data = new TextEncoder().encode(text);
-
-      const hash = await crypto.subtle.digest("SHA-256", data);
-
-      return Array.from(new Uint8Array(hash))
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
-
-    }
-
-
-
-    async function validar(videoId, expira, key) {
-
-      if (!key) return false;
-
-      const correto = await sha256(
-        `${videoId}|${expira}|${SEGREDO}`
-      );
-
-      return correto === key;
-
-    }
-
-
-
-    async function entrarFullscreen(el) {
-
-      if (el.requestFullscreen) {
-        await el.requestFullscreen();
-      }
-
-      else if (el.webkitRequestFullscreen) {
-        await el.webkitRequestFullscreen();
-      }
-
-    }
-
-
-
-    /* ===== PLAYER ===== */
-
-    async function iniciarPlayer() {
-
-      console.log("URL ATUAL:", window.location.href);
-
-      const { videoId, expira, key } = getParams();
-
-      console.log({
-        videoId,
-        expira,
-        key
-      });
-
-      const erro = document.getElementById("erro");
-      const iframe = document.getElementById("playerFrame");
-
-
-
-      /* ===== VIDEO ===== */
-
-      if (!videoId) {
-
-        erro.textContent = "Vídeo não encontrado.";
-        erro.style.display = "flex";
-
-        return false;
-
-      }
-
-
-
-      /* ===== EXPIRAÇÃO ===== */
-
-      if (expira && Date.now() > Number(expira)) {
-
-        erro.textContent = "⚠️ Link expirado. Solicite um novo.";
-        erro.style.display = "flex";
-
-        return false;
-
-      }
-
-
-
-      /* ===== VALIDA HASH ===== */
-
-      const valido = await validar(videoId, expira, key);
-
-      if (!valido) {
-
-        erro.textContent = "⚠️ Link inválido.";
-        erro.style.display = "flex";
-
-        return false;
-
-      }
-
-
-
-      /* ===== URL FINAL ===== */
-
-      const urlFinal =
-        `https://iframe.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}?autoplay=1`;
-
-      console.log("URL FINAL PLAYER:", urlFinal);
-
-
-
-      /* ===== CARREGA PLAYER ===== */
-
-      iframe.src = urlFinal;
-
-      iframe.addEventListener("load", () => {
-
-        iframe.style.opacity = "1";
-
-      });
-
-
-
-      return true;
-
-    }
-
-
-
-    /* ===== INIT ===== */
-
-    window.onload = async () => {
-
-      const ok = await iniciarPlayer();
-
-      if (!ok) return;
-
-      const botao = document.getElementById("botaoPlay");
-      const iframe = document.getElementById("playerFrame");
-
-
-
-      botao.addEventListener("click", async () => {
-
-        botao.classList.add("hide");
-
-        await entrarFullscreen(iframe);
-
-      });
-
+<div id="player-wrapper">
+  <iframe id="playerFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+</div>
+
+<button id="botaoPlay">
+  <img src="play.png" alt="Play">
+</button>
+
+<div id="erro" class="erro"></div>
+
+<script>
+  /* ===== CONFIGURAÇÃO ===== */
+  const SEGREDO = "gregoriPlay123456";
+  const LIBRARY_ID = "581799";
+
+  /* ===== HELPERS ===== */
+  function getParams() {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      videoId: p.get("video_id"),
+      expira: parseInt(p.get("expira")),
+      key: p.get("key")
     };
+  }
 
-  </script>
+  async function sha256(text) {
+    const data = new TextEncoder().encode(text);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hash))
+      .map(b => b.toString(16).padStart(2,"0"))
+      .join("");
+  }
+
+  async function validar(videoId, expira, key) {
+    if (!key) return false;
+    const correto = await sha256(`${videoId}|${expira}|${SEGREDO}`);
+    return correto === key;
+  }
+
+  async function entrarFullscreen(el) {
+    if (el.requestFullscreen) await el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
+  }
+
+  /* ===== PLAYER ===== */
+  async function iniciarPlayer() {
+    const { videoId, expira, key } = getParams();
+    const erro = document.getElementById("erro");
+    const iframe = document.getElementById("playerFrame");
+
+    if (!videoId) {
+      erro.textContent = "Vídeo não encontrado.";
+      erro.style.display = "flex";
+      return false;
+    }
+
+    if (expira && Date.now() > expira) {
+      erro.textContent = "⚠️ Link expirado. Solicite um novo.";
+      erro.style.display = "flex";
+      return false;
+    }
+
+    const valido = await validar(videoId, expira, key);
+    if (!valido) {
+      erro.textContent = "⚠️ Link inválido.";
+      erro.style.display = "flex";
+      return false;
+    }
+
+    iframe.src = `https://iframe.mediadelivery.net/play/${LIBRARY_ID}/${videoId}?autoplay=1`;
+
+    iframe.addEventListener("load", () => {
+      iframe.style.opacity = "1";
+    });
+
+    return true;
+  }
+
+  /* ===== INIT ===== */
+  window.onload = async () => {
+    const ok = await iniciarPlayer();
+    if (!ok) return;
+
+    const botao = document.getElementById("botaoPlay");
+    const iframe = document.getElementById("playerFrame");
+
+    botao.addEventListener("click", async () => {
+      botao.classList.add("hide");
+      await entrarFullscreen(iframe);
+    });
+  };
+</script>
 
 </body>
 </html>
+
