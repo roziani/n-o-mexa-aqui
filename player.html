@@ -121,8 +121,60 @@
 
   <script>
 
-   alert("PLAYER NOVO");
-    
+    /* ===== CONFIG ===== */
+
+    const SEGREDO = "gregoriPlay123456";
+    const LIBRARY_ID = "660152";
+
+
+
+    /* ===== PARAMS ===== */
+
+    function getParams() {
+
+      const p = new URLSearchParams(window.location.search);
+
+      return {
+        videoId: p.get("video_id"),
+        expira: p.get("expira"),
+        key: p.get("key")
+      };
+
+    }
+
+
+
+    /* ===== HASH ===== */
+
+    async function sha256(text) {
+
+      const data = new TextEncoder().encode(text);
+
+      const hash = await crypto.subtle.digest("SHA-256", data);
+
+      return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+
+    }
+
+
+
+    async function validar(videoId, expira, key) {
+
+      if (!key) return false;
+
+      const correto =
+        await sha256(`${videoId}|${expira}|${SEGREDO}`);
+
+      return correto === key;
+
+    }
+
+
+
+    /* ===== FULLSCREEN ===== */
+
     async function entrarFullscreen(el) {
 
       if (el.requestFullscreen) {
@@ -137,16 +189,75 @@
 
 
 
-    /* ===== PLAYER TESTE ===== */
+    /* ===== PLAYER ===== */
 
     async function iniciarPlayer() {
 
+      const { videoId, expira, key } = getParams();
+
+      const erro = document.getElementById("erro");
       const iframe = document.getElementById("playerFrame");
 
-      iframe.src =
-        "https://iframe.mediadelivery.net/embed/660152/301b7e0b-d9ca-40d3-82bd-519850644a4c?autoplay=1";
 
-      iframe.style.opacity = "1";
+
+      /* sem vídeo */
+
+      if (!videoId) {
+
+        erro.textContent = "Vídeo não encontrado.";
+        erro.style.display = "flex";
+
+        return false;
+
+      }
+
+
+
+      /* expiração */
+
+      if (expira && Date.now() > Number(expira)) {
+
+        erro.textContent =
+          "⚠️ Link expirado. Solicite um novo.";
+
+        erro.style.display = "flex";
+
+        return false;
+
+      }
+
+
+
+      /* valida hash */
+
+      const valido =
+        await validar(videoId, expira, key);
+
+      if (!valido) {
+
+        erro.textContent =
+          "⚠️ Link inválido.";
+
+        erro.style.display = "flex";
+
+        return false;
+
+      }
+
+
+
+      /* bunny */
+
+      iframe.src =
+        `https://iframe.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}?autoplay=1`;
+
+
+
+      iframe.addEventListener("load", () => {
+
+        iframe.style.opacity = "1";
+
+      });
 
       return true;
 
@@ -162,8 +273,13 @@
 
       if (!ok) return;
 
-      const botao = document.getElementById("botaoPlay");
-      const iframe = document.getElementById("playerFrame");
+      const botao =
+        document.getElementById("botaoPlay");
+
+      const iframe =
+        document.getElementById("playerFrame");
+
+
 
       botao.addEventListener("click", async () => {
 
