@@ -121,57 +121,6 @@
 
   <script>
 
-    /* ===== CONFIGURAÇÃO ===== */
-
-    const SEGREDO = "gregoriPlay123456";
-    const LIBRARY_ID = "660152";
-
-
-
-    /* ===== HELPERS ===== */
-
-    function getParams() {
-
-      const p = new URLSearchParams(window.location.search);
-
-      return {
-        videoId: p.get("video_id"),
-        expira: p.get("expira"),
-        key: p.get("key")
-      };
-
-    }
-
-
-
-    async function sha256(text) {
-
-      const data = new TextEncoder().encode(text);
-
-      const hash = await crypto.subtle.digest("SHA-256", data);
-
-      return Array.from(new Uint8Array(hash))
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
-
-    }
-
-
-
-    async function validar(videoId, expira, key) {
-
-      if (!key) return false;
-
-      const correto = await sha256(
-        `${videoId}|${expira}|${SEGREDO}`
-      );
-
-      return correto === key;
-
-    }
-
-
-
     async function entrarFullscreen(el) {
 
       if (el.requestFullscreen) {
@@ -186,86 +135,16 @@
 
 
 
-    /* ===== PLAYER ===== */
+    /* ===== PLAYER TESTE ===== */
 
     async function iniciarPlayer() {
 
-      console.log("URL ATUAL:", window.location.href);
-
-      const { videoId, expira, key } = getParams();
-
-      console.log({
-        videoId,
-        expira,
-        key
-      });
-
-      const erro = document.getElementById("erro");
       const iframe = document.getElementById("playerFrame");
 
+      iframe.src =
+        "https://iframe.mediadelivery.net/embed/660152/301b7e0b-d9ca-40d3-82bd-519850644a4c?autoplay=1";
 
-
-      /* ===== VIDEO ===== */
-
-      if (!videoId) {
-
-        erro.textContent = "Vídeo não encontrado.";
-        erro.style.display = "flex";
-
-        return false;
-
-      }
-
-
-
-      /* ===== EXPIRAÇÃO ===== */
-
-      if (expira && Date.now() > Number(expira)) {
-
-        erro.textContent = "⚠️ Link expirado. Solicite um novo.";
-        erro.style.display = "flex";
-
-        return false;
-
-      }
-
-
-
-      /* ===== VALIDA HASH ===== */
-
-      const valido = await validar(videoId, expira, key);
-
-      if (!valido) {
-
-        erro.textContent = "⚠️ Link inválido.";
-        erro.style.display = "flex";
-
-        return false;
-
-      }
-
-
-
-      /* ===== URL FINAL ===== */
-
-      const urlFinal =
-        `https://iframe.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}?autoplay=1`;
-
-      console.log("URL FINAL PLAYER:", urlFinal);
-
-
-
-      /* ===== CARREGA PLAYER ===== */
-
-      iframe.src = urlFinal;
-
-      iframe.addEventListener("load", () => {
-
-        iframe.style.opacity = "1";
-
-      });
-
-
+      iframe.style.opacity = "1";
 
       return true;
 
@@ -283,8 +162,6 @@
 
       const botao = document.getElementById("botaoPlay");
       const iframe = document.getElementById("playerFrame");
-
-
 
       botao.addEventListener("click", async () => {
 
