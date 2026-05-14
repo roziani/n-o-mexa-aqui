@@ -162,7 +162,8 @@
       return false;
     }
 
-    iframe.src = `https://iframe.mediadelivery.net/play/${LIBRARY_ID}/${videoId}?autoplay=1`;
+   iframe.src =
+`https://player.mediadelivery.net/play/${LIBRARY_ID}/${videoId}`;
 
     iframe.addEventListener("load", () => {
       iframe.style.opacity = "1";
