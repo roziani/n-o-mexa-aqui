@@ -121,14 +121,14 @@
 
   <script>
 
-    /* ===== CONFIG ===== */
+    /* ===== CONFIGURAÇÃO ===== */
 
     const SEGREDO = "gregoriPlay123456";
-    const LIBRARY_ID = "660167";
+    const LIBRARY_ID = "660152";
 
 
 
-    /* ===== PARAMS ===== */
+    /* ===== HELPERS ===== */
 
     function getParams() {
 
@@ -143,8 +143,6 @@
     }
 
 
-
-    /* ===== HASH ===== */
 
     async function sha256(text) {
 
@@ -164,16 +162,15 @@
 
       if (!key) return false;
 
-      const correto =
-        await sha256(`${videoId}|${expira}|${SEGREDO}`);
+      const correto = await sha256(
+        `${videoId}|${expira}|${SEGREDO}`
+      );
 
       return correto === key;
 
     }
 
 
-
-    /* ===== FULLSCREEN ===== */
 
     async function entrarFullscreen(el) {
 
@@ -193,14 +190,22 @@
 
     async function iniciarPlayer() {
 
+      console.log("URL ATUAL:", window.location.href);
+
       const { videoId, expira, key } = getParams();
+
+      console.log({
+        videoId,
+        expira,
+        key
+      });
 
       const erro = document.getElementById("erro");
       const iframe = document.getElementById("playerFrame");
 
 
 
-      /* sem vídeo */
+      /* ===== VIDEO ===== */
 
       if (!videoId) {
 
@@ -213,13 +218,11 @@
 
 
 
-      /* expiração */
+      /* ===== EXPIRAÇÃO ===== */
 
       if (expira && Date.now() > Number(expira)) {
 
-        erro.textContent =
-          "⚠️ Link expirado. Solicite um novo.";
-
+        erro.textContent = "⚠️ Link expirado. Solicite um novo.";
         erro.style.display = "flex";
 
         return false;
@@ -228,16 +231,13 @@
 
 
 
-      /* valida hash */
+      /* ===== VALIDA HASH ===== */
 
-      const valido =
-        await validar(videoId, expira, key);
+      const valido = await validar(videoId, expira, key);
 
       if (!valido) {
 
-        erro.textContent =
-          "⚠️ Link inválido.";
-
+        erro.textContent = "⚠️ Link inválido.";
         erro.style.display = "flex";
 
         return false;
@@ -246,18 +246,26 @@
 
 
 
-      /* bunny */
+      /* ===== URL FINAL ===== */
 
-      iframe.src =
+      const urlFinal =
         `https://iframe.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}?autoplay=1`;
 
+      console.log("URL FINAL PLAYER:", urlFinal);
 
+
+
+      /* ===== CARREGA PLAYER ===== */
+
+      iframe.src = urlFinal;
 
       iframe.addEventListener("load", () => {
 
         iframe.style.opacity = "1";
 
       });
+
+
 
       return true;
 
@@ -273,11 +281,8 @@
 
       if (!ok) return;
 
-      const botao =
-        document.getElementById("botaoPlay");
-
-      const iframe =
-        document.getElementById("playerFrame");
+      const botao = document.getElementById("botaoPlay");
+      const iframe = document.getElementById("playerFrame");
 
 
 
