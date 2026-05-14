@@ -194,10 +194,10 @@
     }
 
     /* ===== PLAYER ===== */
-    alert(`https://player.mediadelivery.net/play/${LIBRARY_ID}/${videoId}`);
+    alert(`https://player.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}`);
     
     iframe.src =
-      `https://player.mediadelivery.net/play/${LIBRARY_ID}/${videoId}`;
+      `https://player.mediadelivery.net/embed/${LIBRARY_ID}/${videoId}`;
 
     iframe.addEventListener("load", () => {
       iframe.style.opacity = "1";
